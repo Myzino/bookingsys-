@@ -3,40 +3,42 @@ import Footer from '@/components/util/Footer';
 import Header from '@/components/util/Header';
 import Sidebar from '@/components/util/Sidebar';
 import { ArrowUpDown, Check, ChevronLeft, ChevronRight, Edit, Eye, Filter, Trash } from 'lucide-react';
+import Image from 'next/image';
 import { useMemo, useState } from 'react';
 
 export default function Dashboard() {
 
-    // Sample data for the table
+    // Sample data for books
     const initialData = [
-        { id: 1, name: 'John Doe', email: 'john@example.com', role: 'Admin', status: 'Active', lastLogin: '2025-04-21' },
-        { id: 2, name: 'Jane Smith', email: 'jane@example.com', role: 'User', status: 'Active', lastLogin: '2025-04-20' },
-        { id: 3, name: 'Robert Johnson', email: 'robert@example.com', role: 'User', status: 'Inactive', lastLogin: '2025-04-15' },
-        { id: 4, name: 'Emily Davis', email: 'emily@example.com', role: 'User', status: 'Active', lastLogin: '2025-04-19' },
-        { id: 5, name: 'Michael Wilson', email: 'michael@example.com', role: 'Admin', status: 'Active', lastLogin: '2025-04-21' },
-        { id: 6, name: 'Sarah Brown', email: 'sarah@example.com', role: 'User', status: 'Inactive', lastLogin: '2025-04-10' },
-        { id: 7, name: 'David Miller', email: 'david@example.com', role: 'User', status: 'Active', lastLogin: '2025-04-18' },
-        { id: 8, name: 'Lisa Anderson', email: 'lisa@example.com', role: 'User', status: 'Active', lastLogin: '2025-04-17' },
-        { id: 9, name: 'Thomas Taylor', email: 'thomas@example.com', role: 'Admin', status: 'Active', lastLogin: '2025-04-16' },
-        { id: 10, name: 'Jessica White', email: 'jessica@example.com', role: 'User', status: 'Inactive', lastLogin: '2025-04-14' },
-        { id: 11, name: 'Daniel Clark', email: 'daniel@example.com', role: 'User', status: 'Active', lastLogin: '2025-04-13' },
-        { id: 12, name: 'Olivia Martin', email: 'olivia@example.com', role: 'User', status: 'Active', lastLogin: '2025-04-12' },
+        { id: 1, title: 'The Great Gatsby', author: 'F. Scott Fitzgerald', genre: 'Classic', status: 'Available', publishDate: '1925-04-10', price: '$12.99', coverImage: '/images/g.png' },
+        { id: 2, title: 'To Kill a Mockingbird', author: 'Harper Lee', genre: 'Fiction', status: 'Available', publishDate: '1960-07-11', price: '$14.99', coverImage: '/api/placeholder/200/300' },
+        { id: 3, title: '1984', author: 'George Orwell', genre: 'Science Fiction', status: 'On Loan', publishDate: '1949-06-08', price: '$11.99', coverImage: '/api/placeholder/200/300' },
+        { id: 4, title: 'Pride and Prejudice', author: 'Jane Austen', genre: 'Romance', status: 'Available', publishDate: '1813-01-28', price: '$9.99', coverImage: '/api/placeholder/200/300' },
+        { id: 5, title: 'The Hobbit', author: 'J.R.R. Tolkien', genre: 'Fantasy', status: 'Available', publishDate: '1937-09-21', price: '$13.99', coverImage: '/api/placeholder/200/300' },
+        { id: 6, title: 'The Catcher in the Rye', author: 'J.D. Salinger', genre: 'Coming-of-age', status: 'On Loan', publishDate: '1951-07-16', price: '$10.99', coverImage: '/api/placeholder/200/300' },
+        { id: 7, title: 'Brave New World', author: 'Aldous Huxley', genre: 'Science Fiction', status: 'Available', publishDate: '1932-06-01', price: '$12.49', coverImage: '/api/placeholder/200/300' },
+        { id: 8, title: 'Lord of the Flies', author: 'William Golding', genre: 'Adventure', status: 'Available', publishDate: '1954-09-17', price: '$11.49', coverImage: '/api/placeholder/200/300' },
+        { id: 9, title: 'The Alchemist', author: 'Paulo Coelho', genre: 'Fantasy', status: 'On Loan', publishDate: '1988-01-01', price: '$10.99', coverImage: '/api/placeholder/200/300' },
+        { id: 10, title: 'Moby Dick', author: 'Herman Melville', genre: 'Adventure', status: 'Available', publishDate: '1851-10-18', price: '$12.99', coverImage: '/api/placeholder/200/300' },
+        { id: 11, title: 'Wuthering Heights', author: 'Emily Brontë', genre: 'Gothic', status: 'Available', publishDate: '1847-12-19', price: '$9.99', coverImage: '/api/placeholder/200/300' },
+        { id: 12, title: 'Don Quixote', author: 'Miguel de Cervantes', genre: 'Classic', status: 'On Loan', publishDate: '1605-01-16', price: '$14.99', coverImage: '/api/placeholder/200/300' },
     ];
 
-    // State for data table
+    // State for data
     const [data, setData] = useState(initialData);
     const [sortConfig, setSortConfig] = useState({ key: 'id', direction: 'asc' });
     const [currentPage, setCurrentPage] = useState(1);
-    const [rowsPerPage, setRowsPerPage] = useState(5);
+    const [rowsPerPage, setRowsPerPage] = useState(8); // Showing 8 cards per page
     const [selectedRows, setSelectedRows] = useState([]);
     const [filterValue, setFilterValue] = useState('');
     const [visibleColumns, setVisibleColumns] = useState({
         id: true,
-        name: true,
-        email: true,
-        role: true,
+        title: true,
+        author: true,
+        genre: true,
         status: true,
-        lastLogin: true,
+        publishDate: true,
+        price: true,
         actions: true
     });
     const [columnMenuOpen, setColumnMenuOpen] = useState(false);
@@ -55,9 +57,9 @@ export default function Dashboard() {
         return data.filter(item => {
             const searchTerm = filterValue.toLowerCase();
             return (
-                item.name.toLowerCase().includes(searchTerm) ||
-                item.email.toLowerCase().includes(searchTerm) ||
-                item.role.toLowerCase().includes(searchTerm) ||
+                item.title.toLowerCase().includes(searchTerm) ||
+                item.author.toLowerCase().includes(searchTerm) ||
+                item.genre.toLowerCase().includes(searchTerm) ||
                 item.status.toLowerCase().includes(searchTerm)
             );
         });
@@ -123,24 +125,48 @@ export default function Dashboard() {
                 {/* Content */}
                 <main className="flex-1 overflow-y-auto p-4 md:p-6 bg-gray-100">
                     <div className="mb-6">
-                        <h1 className="text-2xl font-bold text-gray-800">Listing Overview</h1>
-                        <p className="text-gray-600">Welcome to your Listing panel</p>
+                        <h1 className="text-2xl font-bold text-gray-800">Book Inventory</h1>
+                        <p className="text-gray-600">Manage your book collection</p>
                     </div>
 
-                    {/* Dashboard cards */}
-
-                    {/* Data Table Section */}
+                    {/* Card List Section */}
                     <div className="bg-white rounded-lg shadow text-black p-6">
-                        <div className="flex items-center justify-between mb-4">
-                            <h3 className="font-bold text-gray-700">User Management</h3>
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
+                            <h3 className="font-bold text-lg text-gray-700">Book Management</h3>
                             
-                            <div className="flex items-center space-x-2">
+                            <div className="flex flex-wrap items-center gap-3">
+                                {/* Sort dropdown */}
+                                <div className="relative text-black">
+                                    <select 
+                                        className="pl-2 pr-8 py-2 border rounded-md appearance-none"
+                                        value={`${sortConfig.key}-${sortConfig.direction}`}
+                                        onChange={(e) => {
+                                            const [key, direction] = e.target.value.split('-');
+                                            setSortConfig({ key, direction });
+                                        }}
+                                    >
+                                        <option value="id-asc">ID (Ascending)</option>
+                                        <option value="id-desc">ID (Descending)</option>
+                                        <option value="title-asc">Title (A-Z)</option>
+                                        <option value="title-desc">Title (Z-A)</option>
+                                        <option value="author-asc">Author (A-Z)</option>
+                                        <option value="author-desc">Author (Z-A)</option>
+                                        <option value="genre-asc">Genre (A-Z)</option>
+                                        <option value="genre-desc">Genre (Z-A)</option>
+                                        <option value="publishDate-asc">Publish Date (Oldest)</option>
+                                        <option value="publishDate-desc">Publish Date (Newest)</option>
+                                        <option value="price-asc">Price (Low to High)</option>
+                                        <option value="price-desc">Price (High to Low)</option>
+                                    </select>
+                                    <ArrowUpDown size={16} className="absolute right-2 top-3 text-gray-400 pointer-events-none" />
+                                </div>
+                                
                                 {/* Filter input */}
                                 <div className="relative text-black">
                                     <input
                                         type="text"
-                                        placeholder="Search..."
-                                        className="pl-8 pr-4 py-2 border rounded-md"
+                                        placeholder="Search books..."
+                                        className="pl-8 pr-4 py-2 border rounded-md w-full sm:w-auto"
                                         value={filterValue}
                                         onChange={(e) => setFilterValue(e.target.value)}
                                     />
@@ -154,7 +180,7 @@ export default function Dashboard() {
                                         onClick={() => setColumnMenuOpen(!columnMenuOpen)}
                                     >
                                         <Eye size={16} className="mr-1" />
-                                        <span>Columns</span>
+                                        <span>Fields</span>
                                     </button>
                                     
                                     {columnMenuOpen && (
@@ -172,164 +198,130 @@ export default function Dashboard() {
                                         </div>
                                     )}
                                 </div>
+
+                                {/* Select all checkbox */}
+                                <div className="flex items-center">
+                                    <input
+                                        type="checkbox"
+                                        className="mr-2"
+                                        checked={selectedRows.length === paginatedData.length && paginatedData.length > 0}
+                                        onChange={toggleAllRows}
+                                    />
+                                    <span className="text-sm text-gray-500">Select All</span>
+                                </div>
                             </div>
                         </div>
 
-                        {/* Data Table */}
-                        <div className="overflow-x-auto">
-                            <table className="min-w-full divide-y divide-gray-200">
-                                <thead className="bg-gray-50">
-                                    <tr>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            <div className="flex items-center">
-                                                <input
-                                                    type="checkbox"
-                                                    className="mr-2"
-                                                    checked={selectedRows.length === paginatedData.length && paginatedData.length > 0}
-                                                    onChange={toggleAllRows}
-                                                />
-                                            </div>
-                                        </th>
-                                        {visibleColumns.id && (
-                                            <th 
-                                                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
-                                                onClick={() => handleSort('id')}
-                                            >
-                                                <div className="flex items-center">
-                                                    <span>ID</span>
-                                                    <ArrowUpDown size={16} className="ml-1" />
-                                                </div>
-                                            </th>
+                        {/* Card Grid */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                            {paginatedData.map((book) => (
+                                <div 
+                                    key={book.id} 
+                                    className={`border rounded-lg overflow-hidden shadow-sm ${
+                                        selectedRows.includes(book.id) ? "border-blue-500 ring-2 ring-blue-200" : "border-gray-200"
+                                    }`}
+                                >
+                                    <div className="relative">
+                                        {/* Selection checkbox */}
+                                        <input
+                                            type="checkbox"
+                                            checked={selectedRows.includes(book.id)}
+                                            onChange={() => toggleRowSelection(book.id)}
+                                            className="absolute top-2 right-2 z-10 w-5 h-5"
+                                        />
+                                        
+                                        {/* Book cover image */}
+                                        <div className="flex justify-center bg-gray-50 p-4">
+                                           <Image 
+                                           src={book.coverImage}
+                                             alt={book.title}
+                                                width={300}
+                                                height={300}
+                                           />
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="p-4">
+                                        {visibleColumns.title && (
+                                            <h4 className="font-medium text-gray-900 text-lg mb-1 line-clamp-1">{book.title}</h4>
                                         )}
-                                        {visibleColumns.name && (
-                                            <th 
-                                                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
-                                                onClick={() => handleSort('name')}
-                                            >
-                                                <div className="flex items-center">
-                                                    <span>Name</span>
-                                                    <ArrowUpDown size={16} className="ml-1" />
-                                                </div>
-                                            </th>
+                                        
+                                        {visibleColumns.author && (
+                                            <p className="text-sm text-gray-600 mb-3">by {book.author}</p>
                                         )}
-                                        {visibleColumns.email && (
-                                            <th 
-                                                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
-                                                onClick={() => handleSort('email')}
-                                            >
-                                                <div className="flex items-center">
-                                                    <span>Email</span>
-                                                    <ArrowUpDown size={16} className="ml-1" />
-                                                </div>
-                                            </th>
-                                        )}
-                                        {visibleColumns.role && (
-                                            <th 
-                                                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
-                                                onClick={() => handleSort('role')}
-                                            >
-                                                <div className="flex items-center">
-                                                    <span>Role</span>
-                                                    <ArrowUpDown size={16} className="ml-1" />
-                                                </div>
-                                            </th>
-                                        )}
-                                        {visibleColumns.status && (
-                                            <th 
-                                                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
-                                                onClick={() => handleSort('status')}
-                                            >
-                                                <div className="flex items-center">
-                                                    <span>Status</span>
-                                                    <ArrowUpDown size={16} className="ml-1" />
-                                                </div>
-                                            </th>
-                                        )}
-                                        {visibleColumns.lastLogin && (
-                                            <th 
-                                                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
-                                                onClick={() => handleSort('lastLogin')}
-                                            >
-                                                <div className="flex items-center">
-                                                    <span>Last Login</span>
-                                                    <ArrowUpDown size={16} className="ml-1" />
-                                                </div>
-                                            </th>
-                                        )}
-                                        {visibleColumns.actions && (
-                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                Actions
-                                            </th>
-                                        )}
-                                    </tr>
-                                </thead>
-                                <tbody className="bg-white divide-y divide-gray-200">
-                                    {paginatedData.map((row) => (
-                                        <tr key={row.id} className={selectedRows.includes(row.id) ? "bg-blue-50" : ""}>
-                                            <td className="px-6 py-4 whitespace-nowrap">
-                                                <input
-                                                    type="checkbox"
-                                                    checked={selectedRows.includes(row.id)}
-                                                    onChange={() => toggleRowSelection(row.id)}
-                                                />
-                                            </td>
+                                        
+                                        <div className="space-y-2 text-sm mb-3">
                                             {visibleColumns.id && (
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                    {row.id}
-                                                </td>
+                                                <div className="flex justify-between">
+                                                    <span className="text-gray-500">ID:</span>
+                                                    <span className="text-gray-900">{book.id}</span>
+                                                </div>
                                             )}
-                                            {visibleColumns.name && (
-                                                <td className="px-6 py-4 whitespace-nowrap">
-                                                    <div className="text-sm font-medium text-gray-900">{row.name}</div>
-                                                </td>
+                                            
+                                            {visibleColumns.genre && (
+                                                <div className="flex justify-between">
+                                                    <span className="text-gray-500">Genre:</span>
+                                                    <span className="text-gray-900">{book.genre}</span>
+                                                </div>
                                             )}
-                                            {visibleColumns.email && (
-                                                <td className="px-6 py-4 whitespace-nowrap">
-                                                    <div className="text-sm text-gray-500">{row.email}</div>
-                                                </td>
+                                            
+                                            {visibleColumns.publishDate && (
+                                                <div className="flex justify-between">
+                                                    <span className="text-gray-500">Published:</span>
+                                                    <span className="text-gray-900">{book.publishDate}</span>
+                                                </div>
                                             )}
-                                            {visibleColumns.role && (
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                    {row.role}
-                                                </td>
+                                            
+                                            {visibleColumns.price && (
+                                                <div className="flex justify-between">
+                                                    <span className="text-gray-500">Price:</span>
+                                                    <span className="text-gray-900 font-medium">{book.price}</span>
+                                                </div>
                                             )}
+                                            
                                             {visibleColumns.status && (
-                                                <td className="px-6 py-4 whitespace-nowrap">
-                                                    <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                                                        row.status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                                                    }`}>
-                                                        {row.status}
+                                                <div className="flex justify-between">
+                                                    <span className="text-gray-500">Status:</span>
+                                                    <span className={`${
+                                                        book.status === 'Available' ? 'text-green-600' : 'text-amber-600'
+                                                    } font-medium`}>
+                                                        {book.status}
                                                     </span>
-                                                </td>
+                                                </div>
                                             )}
-                                            {visibleColumns.lastLogin && (
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                    {row.lastLogin}
-                                                </td>
-                                            )}
-                                            {visibleColumns.actions && (
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                                    <div className="flex space-x-2">
-                                                        <button className="text-blue-600 hover:text-blue-900">
-                                                            <Eye size={18} />
-                                                        </button>
-                                                        <button className="text-green-600 hover:text-green-900">
-                                                            <Edit size={18} />
-                                                        </button>
-                                                        <button className="text-red-600 hover:text-red-900">
-                                                            <Trash size={18} />
-                                                        </button>
-                                                    </div>
-                                                </td>
-                                            )}
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
+                                        </div>
+                                        
+                                        {visibleColumns.actions && (
+                                            <div className="flex justify-between border-t pt-3 mt-3">
+                                                <button className="flex items-center text-blue-600 hover:text-blue-800">
+                                                    <Eye size={16} className="mr-1" />
+                                                    <span>View</span>
+                                                </button>
+                                                <button className="flex items-center text-green-600 hover:text-green-800">
+                                                    <Edit size={16} className="mr-1" />
+                                                    <span>Edit</span>
+                                                </button>
+                                                <button className="flex items-center text-red-600 hover:text-red-800">
+                                                    <Trash size={16} className="mr-1" />
+                                                    <span>Delete</span>
+                                                </button>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            ))}
                         </div>
 
+                        {/* Empty state */}
+                        {paginatedData.length === 0 && (
+                            <div className="text-center py-12">
+                                <p className="text-gray-500 mb-2">No books found matching your criteria</p>
+                                <p className="text-gray-400">Try adjusting your search or filters</p>
+                            </div>
+                        )}
+
                         {/* Pagination */}
-                        <div className="py-3 flex items-center justify-between">
+                        <div className="py-4 mt-6 flex items-center justify-between border-t">
                             <div className="flex-1 flex justify-between sm:hidden">
                                 <button
                                     onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
@@ -353,7 +345,7 @@ export default function Dashboard() {
                                         <span className="font-medium">
                                             {Math.min(currentPage * rowsPerPage, sortedData.length)}
                                         </span>{" "}
-                                        of <span className="font-medium">{sortedData.length}</span> results
+                                        of <span className="font-medium">{sortedData.length}</span> books
                                     </p>
                                 </div>
                                 <div>

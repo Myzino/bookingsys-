@@ -29,7 +29,6 @@ const toggleSidebar = () => {
               <ul>
                 {[
                   { name: 'Home', href:'/dashboard', icon: <SquareKanban size={20} /> },
-                  { name: 'Book', href:'/book', icon: <SquareKanban size={20} /> },
                   { name: 'List', href:'/listing', icon: <ChevronRight size={20} /> },
                   { name: 'Profile', href:'/profile', icon: <User size={20} /> },
                   { name: 'Logout', href:'/', icon: <LogOut size={20} /> }

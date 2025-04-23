@@ -1,14 +1,19 @@
 'use client'
+import { TriangleAlert } from "lucide-react";
 import Image from "next/image";
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { toast } from "sonner";
 export default function Home() {
+  const router = useRouter();
 const [form, setForm] = useState({
   firstname: "",
   lastname: "",
   email: "",
   password: "",
 })
+const [error, setError] = useState(null);
 const [pending, setPending] = useState(false)
 const handleSubmit = async (e: React.FormEvent) => {
   e.preventDefault();
@@ -23,12 +28,18 @@ const handleSubmit = async (e: React.FormEvent) => {
 
     const data = await res.json();
 
-    if (!res.ok) {
-      console.error("Signup failed:", data);
-      // You can show `data.message` to the user
-    } else {
-      console.log("Signup success:", data);
-      // Redirect or show success message
+    if (res.status === 400) {
+     setError(data.message);
+      setPending(false);
+      
+    } else if (res.status ===201) {
+      setPending(false);
+      toast.success(data.message);
+      router.push("/signin"); 
+    } 
+    else if(res.status === 500){
+      setError(data.message);
+      setPending(false)
     }
 
   } catch (err) {
@@ -50,6 +61,12 @@ const handleSubmit = async (e: React.FormEvent) => {
               style={{ display: 'block', marginLeft: 'auto', marginRight: 'auto' }}
               className="rounded-full"
             />
+            {!! error && (
+              <div className="bg-destructive/15 p-3 rounded-md text-destructive flex items-center gap-x-2 text-sm mb-6">
+                <TriangleAlert />
+                <p>{error}</p>
+              </div>
+            )}
             <h1 className="text-xl font-bold leading-tight tracking-tight text-center text-gray-900 md:text-xl dark:text-white">
               Register an Account
             </h1>
