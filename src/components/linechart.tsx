@@ -1,23 +1,20 @@
 'use client';
 
 import {
-    CartesianGrid,
-    Line,
-    LineChart,
-    ResponsiveContainer,
-    Tooltip,
-    XAxis,
-    YAxis,
+  CartesianGrid,
+  Line,
+  LineChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
 } from 'recharts';
 
 const data = [
-  { name: 'Mon', value: 30 },
-  { name: 'Tue', value: 45 },
-  { name: 'Wed', value: 60 },
-  { name: 'Thu', value: 50 },
-  { name: 'Fri', value: 75 },
-  { name: 'Sat', value: 40 },
-  { name: 'Sun', value: 65 },
+  { name: 'Mon', value: 2 },
+  { name: 'Tue', value: 5 },
+  { name: 'Wed', value: 2 },
+  { name: 'Thu', value: 3 },
 ];
 
 export default function Linechart() {

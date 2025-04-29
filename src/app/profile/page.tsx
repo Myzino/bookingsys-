@@ -2,35 +2,40 @@
 import Footer from '@/components/util/Footer';
 import Header from '@/components/util/Header';
 import Sidebar from '@/components/util/Sidebar';
-import { Milestone, Shield, User, UserCheck } from 'lucide-react';
+import { Milestone, User, UserCheck } from 'lucide-react';
 import Image from 'next/image';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function Dashboard() {
+    const [user, setUser] = useState<any>("");
     const [activeTab, setActiveTab] = useState('profile');
     const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
     const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
 
-    const CardData = [
-        { title: 'Admin', icon: <Shield className="text-blue-500" />, description:'Total Admin: 1' },
-        { title: 'User', icon: <User className="text-green-500" />, description:'Total Users: 3' },
-        { title: 'Appointments', icon: <Milestone className="text-yellow-500" />, description:'Total Appointments: 5' },
-    ]
+  
+        useEffect(() => {
+            const fetchUser = async () => {
+              const res = await fetch('/api/auth/user');
+              if (res.ok) {
+                const data = await res.json();
+                setUser(data);
+              }
+            };
+            fetchUser();
+          }, []);
+        
 
-    // Mock user data
-    const userData = {
-        fullName: "John Doe",
-        email: "john.doe@example.com",
-        role: "Admin",
-        dateJoined: "January 15, 2023",
-        lastLogin: "April 20, 2025",
-        isVerified: true,
-        recentActivity: [
-            { type: "Login", date: "April 20, 2025", details: "Logged in from Chrome/Windows" },
-            { type: "Appointment", date: "April 18, 2025", details: "Booked appointment #A12345" },
-            { type: "Profile", date: "April 15, 2025", details: "Updated profile picture" }
-        ]
-    };
+          const userData = {
+            fullName: `${user?.firstname} ${user?.lastname}`, // <-- added here
+            email: user?.email, 
+            dateJoined: new Date(user?.createdAt).toLocaleDateString(),
+            lastLogin: new Date(user?.createdAt).toLocaleDateString(),
+            isVerified: true, 
+            recentActivity: [
+                { type: "Login", date: new Date(user?.createdAt).toLocaleDateString(), details: "Logged in from Windows" },
+                { type: "Profile", date: "April 15, 2025", details: "" }
+            ]
+        };
 
     return (
         <div className="flex h-screen bg-gray-100">
@@ -48,17 +53,7 @@ export default function Dashboard() {
                     </div>
 
                     {/* Dashboard cards */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
-                        {CardData.map(({ title, icon, description }) => (
-                            <div key={title} className="bg-white rounded-lg shadow p-6">
-                                <div className="flex items-center mb-2">
-                                    <span className="mr-3">{icon}</span>
-                                    <h3 className="font-bold text-gray-700">{title}</h3>
-                                </div>
-                                <p className="text-black text-sm p-2 font-bold">{description}</p>
-                            </div>
-                        ))}
-                    </div>
+                   
 
                     {/* Profile Management Content */}
                     <div className="bg-white rounded-lg shadow">
@@ -115,7 +110,6 @@ export default function Dashboard() {
                                                     )}
                                                 </div>
                                                 <div className="text-sm text-gray-500">
-                                                    <p className="mb-1">Role: <span className="font-medium">{userData.role}</span></p>
                                                     <p className="mb-1">Email: <span className="font-medium">{userData.email}</span></p>
                                                     <p className="mb-1">Member since: <span className="font-medium">{userData.dateJoined}</span></p>
                                                     <p>Last login: <span className="font-medium">{userData.lastLogin}</span></p>
@@ -193,7 +187,12 @@ export default function Dashboard() {
                                             <div className="mt-4 p-4 border rounded-md">
                                                 <p className="mb-2">Scan this QR code with your authenticator app:</p>
                                                 <div className="bg-white p-4 inline-block">
-                                                    <img src="/api/placeholder/160/160" alt="QR Code" className="w-40 h-40" />
+                                                    <Image
+                                                    src="/images/g.png"
+                                                    alt='asdbjasbd'
+                                                    width={40}
+                                                    height={40}
+                                                    />
                                                 </div>
                                             </div>
                                         )}

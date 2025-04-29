@@ -3,7 +3,6 @@ import Footer from '@/components/util/Footer';
 import Header from '@/components/util/Header';
 import Sidebar from '@/components/util/Sidebar';
 import { ArrowUpDown, Check, ChevronLeft, ChevronRight, Edit, Eye, Filter, Trash, X } from 'lucide-react';
-import { CldImage } from 'next-cloudinary';
 import Image from 'next/image';
 import { useMemo, useRef, useState } from 'react';
 
@@ -108,7 +107,7 @@ export default function Dashboard() {
     ];
    
     const [addModalOpen, setAddModalOpen] = useState(false);
-    const [newBook, setNewBook] = useState({    
+    const [newBook, setNewBook] = useState({
     title: '',
     author: '',
     genre: '',
@@ -128,48 +127,47 @@ const handleInputChange = (e) => {
 };
 
 const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-  
-    // Preview
-    const previewUrl = URL.createObjectURL(file);
-    setNewBook((prev) => ({
-      ...prev,
-      coverImage: file,
-      coverImagePreview: previewUrl,
-    }));
-  
-    // Upload to Cloudinary
-    const formData = new FormData();
-    formData.append('file', file);
-  
-    try {
-      const res = await fetch('/api/auth/upload', {
-        method: 'POST',
-        body: formData,
-      });
-  
-      const data = await res.json();
-  
-      if (data.url) {
-        setNewBook((prev) => ({
-          ...prev,
-          coverImagePreview: data.url, // Cloudinary hosted image
-        }));
-      }
-    } catch (err) {
-      console.error('Image upload failed:', err);
-    }
-  };
-  
+  const file = e.target.files?.[0];
+  if (!file) return;
 
-  const handleImageRemove = () => {
-    setNewBook((prev) => ({
-      ...prev,
-      coverImage: null,
-      coverImagePreview: '',
+  // Preview
+  const previewUrl = URL.createObjectURL(file);
+  setNewBook((prev) => ({
+    ...prev,
+    coverImage: file,
+    coverImagePreview: previewUrl,
+  }));
+
+  // Upload to Cloudinary
+  const formData = new FormData();
+  formData.append('file', file);
+
+  try {
+    const res = await fetch('/api/upload', {
+      method: 'POST',
+      body: formData,
+    });
+
+    const data = await res.json();
+
+    if (data.url) {
+      setNewBook((prev) => ({
+        ...prev,
+        coverImagePreview: data.url, // Cloudinary hosted image
+      }));
+    }
+  } catch (err) {
+    console.error('Image upload failed:', err);
+  }
+};c
+
+const handleImageRemove = () => {
+    setNewBook(prev => ({
+        ...prev,
+        coverImage: null,
+        coverImagePreview: null
     }));
-  };
+};
 const formData = new FormData();
 
 const handleAddBook = async (e: React.FormEvent) => {
@@ -674,16 +672,13 @@ const handleAddBook = async (e: React.FormEvent) => {
                             <div className="flex items-center justify-center border-2 border-dashed border-gray-300 rounded-md p-6">
                                 {newBook.coverImagePreview ? (
                                     <div className="relative w-40 h-56">
-                                       <CldImage
-                                            src={newBook.coverImagePreview} // Use this sample image or upload your own via the Media Explorer
-                                            width="500" // Transform the image: auto-crop to square aspect_ratio
-                                            height="500"
-                                            crop={{
-                                                type: 'auto',
-                                                source: true
-                                            }}
-                                            alt="Nigga"
-                                            />
+                                        <Image
+                                            src={newBook.coverImagePreview}
+                                            alt="Book cover preview"
+                                            width={160}
+                                            height={224}
+                                            className="object-contain"
+                                        />
                                         <button
                                             type="button"
                                             onClick={handleImageRemove}

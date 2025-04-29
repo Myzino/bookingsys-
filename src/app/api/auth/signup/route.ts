@@ -31,7 +31,9 @@ export async function POST(request: Request){
                 firstname,
                 lastname,
                 email,
-                password: hashedPassword
+                password: hashedPassword,
+                createdAt: new Date(),
+                updatedAt: new Date()
             })
             await newUser.save();
             return NextResponse.json({message: "User Created Succesfully"}, {status: 201})

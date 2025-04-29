@@ -1,17 +1,17 @@
 'use client';
 
 import {
-    Cell,
-    Legend,
-    Pie,
-    PieChart,
-    ResponsiveContainer,
-    Tooltip
+  Cell,
+  Legend,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip
 } from 'recharts';
 
 const pieData = [
-  { name: 'User', value: 300 },
-  { name: 'Admin', value: 100 },
+  { name: 'User', value: 1 },
+  { name: 'Books', value: 12 },
 ];
 
 const COLORS = ['#8884d8', '#82ca9d'];

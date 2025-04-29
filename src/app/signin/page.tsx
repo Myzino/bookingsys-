@@ -4,7 +4,7 @@ import { signIn } from "next-auth/react";
 import Image from "next/image";
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { toast } from "sonner";
 export default function Home() {
   const [email, setEmail] = useState<string>("");
@@ -97,7 +97,6 @@ export default function Home() {
 
            <button 
                 type="submit" 
-                disabled={pending}
                 className="w-full bg-gray-500 text-white bg-primary-600 border border-white hover:bg-gray-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
               >Log In
               </button>

@@ -4,14 +4,13 @@ import Piechart from '@/components/piechart';
 import Footer from '@/components/util/Footer';
 import Header from '@/components/util/Header';
 import Sidebar from '@/components/util/Sidebar';
-import { Milestone, Shield, User } from 'lucide-react';
+import { Milestone, User } from 'lucide-react';
 
 export default function Dashboard() {
 
     const CardData = [
-        { title: 'Admin', icon: <Shield className="text-blue-500" />, description:'Total Admin: 1' },
-        { title: 'User', icon: <User className="text-green-500" />, description:'Total Users: 3' },
-        { title: 'Appointments', icon: <Milestone className="text-yellow-500" />, description:'Total Appointments: 5' },
+        { title: 'User', icon: <User className="text-green-500" />, description:'Total Users: 1' },
+        { title: 'Appointments', icon: <Milestone className="text-yellow-500" />, description:'Total Books: 12' },
     ]
   return (
     <div className="flex h-screen bg-gray-100">
@@ -29,7 +28,7 @@ export default function Dashboard() {
           </div>
 
           {/* Dashboard cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 mb-6">
             {CardData.map(({ title, icon, description }) => (
                 <div key={title} className="bg-white rounded-lg shadow p-6">
                 <div className="flex items-center mb-2">
